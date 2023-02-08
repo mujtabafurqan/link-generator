@@ -5,7 +5,7 @@ let redis = new Redis(process.env.REDIS_URL)
 export default async (req, res) => {
 
     const {
-        query: { otpId, otp },
+        query: { otpId, otp, ip },
         method,
       } = req;
 
@@ -20,7 +20,7 @@ export default async (req, res) => {
         if(otpFromRedis != otp) {
             res.status(200).json({ status : 'failure', message: 'OTP does not match' })
         }
-        else if(ipFromRedis != (req.headers['x-forwarded-for'])) {
+        else if(ipFromRedis != ip) {
             res.status(200).json({ status : 'failure', message: 'IP does not match' + ipFromRedis + " " + req.headers['x-forwarded-for'] })
         }else{
             res.status(200).json({ status : 'success'})
