@@ -9,13 +9,13 @@ let redis = new Redis(process.env.REDIS_URL)
 export default function Getotp({otp, ttl, ip}){
   const { data: session } = useSession()
 
-  // if (!session) {
-  //   return (
-  //     <Layout>
-  //       <AccessDenied />
-  //     </Layout>
-  //   )
-  // }
+  if (!session) {
+    return (
+      <Layout>
+        <AccessDenied />
+      </Layout>
+    )
+  }
   if(otp != null){
     return (
       <Layout>
@@ -25,9 +25,6 @@ export default function Getotp({otp, ttl, ip}){
         </p>
         <p>
           And it expires in {ttl} seconds
-        </p>
-        <p>
-          Your IP is: {ip}
         </p>
       </Layout>
     )
@@ -49,14 +46,30 @@ export default function Getotp({otp, ttl, ip}){
 }
 
 export async function getServerSideProps(context) {
-  // const { data: session } = useSession()
-  // if (!session) {
+  const { data: session } = useSession()
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/api/auth/signin',
+        permanent: false,
+      },
+    }
+  }else{
     const {otpId} = context.params;
     const ip = context.req.headers['x-forwarded-for'];
-    const otp = await redis.get(otpId);
+    const otpAndIp = await redis.get(otpId);
     const ttl = await redis.ttl(otpId);
 
-   
-    return { props: { otp , ttl, ip} }
-  // }
+    if(otpAndIp === null) {
+      return { props: { otp : null, ttl: null, ip} }
+    }else{
+      const otpFromRedis = otpAndIp.split(":")[0];
+      const ipFromRedis = otpAndIp.split(":")[1];
+      if(ipFromRedis != ip) {
+        return { props: { otp : null, ttl: null, ip} }
+      }else{
+        return { props: { otp : otpFromRedis, ttl: ttl, ip} }
+      }
+    }
+  }
 }
