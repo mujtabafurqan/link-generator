@@ -6,7 +6,7 @@ import AccessDenied from "../../components/access-denied"
 
 let redis = new Redis(process.env.REDIS_URL)
 
-export default function Getotp({otp, ttl, ip}){
+export default function Getotp({otp, ttl}){
   const { data: session } = useSession()
 
   if (!session) {
@@ -61,14 +61,16 @@ export async function getServerSideProps(context) {
     const ttl = await redis.ttl(otpId);
 
     if(otpAndIp === null) {
-      return { props: { otp : null, ttl: null, ip} }
+      return { props: { otp : null, ttl: null} }
     }else{
       const otpFromRedis = otpAndIp.split(":")[0];
       const ipFromRedis = otpAndIp.split(":")[1];
       if(ipFromRedis != ip) {
-        return { props: { otp : null, ttl: null, ip} }
+        return { props: { otp : otpFromRedis, ttl: ttl} }
       }else{
-        return { props: { otp : otpFromRedis, ttl: ttl, ip} }
+        const newOtpAndIp = otpFromRedis + ":true";
+        await redis.set(otpId, newOtpAndIp, 'EX', 20*60);
+        return { props: { otp : otpFromRedis, ttl: ttl} }
       }
     }
   }
