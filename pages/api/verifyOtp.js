@@ -12,6 +12,8 @@ export default async (req, res) => {
 
     const otpAndIp = await redis.get(otpId);
     const detectedIp = requestIp.getClientIp(req)
+    console.log("detectedIp", detectedIp)
+    console.log(req.headers['x-forwarded-for'] || req.connection.remoteAddress)
     if(otpAndIp === null) {
         res.status(200).json({ status : 'failure', message: 'OTP expired' })
     }else{
