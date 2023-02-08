@@ -20,7 +20,7 @@ export default async (req, res) => {
         if(otpFromRedis !== otp) {
             res.status(200).json({ status : 'failure', message: 'OTP does not match' })
         }
-        else if(ipFromRedis !== req.headers['x-forwarded-for'] || req.connection.remoteAddress) {
+        else if(ipFromRedis !== (req.headers['x-forwarded-for'] || req.connection.remoteAddress)) {
             res.status(200).json({ status : 'failure', message: 'IP does not match' })
         }else{
             res.status(200).json({ status : 'success'})
