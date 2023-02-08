@@ -46,32 +46,23 @@ export default function Getotp({otp, ttl}){
 }
 
 export async function getServerSideProps(context) {
-  const { data: session } = useSession()
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/api/auth/signin',
-        permanent: false,
-      },
-    }
-  }else{
-    const {otpId} = context.params;
-    const ip = context.req.headers['x-forwarded-for'];
-    const otpAndIp = await redis.get(otpId);
-    const ttl = await redis.ttl(otpId);
+  
+  const {otpId} = context.params;
+  const ip = context.req.headers['x-forwarded-for'];
+  const otpAndIp = await redis.get(otpId);
+  const ttl = await redis.ttl(otpId);
 
-    if(otpAndIp === null) {
-      return { props: { otp : null, ttl: null} }
+  if(otpAndIp === null) {
+    return { props: { otp : null, ttl: null} }
+  }else{
+    const otpFromRedis = otpAndIp.split(":")[0];
+    const ipFromRedis = otpAndIp.split(":")[1];
+    if(ipFromRedis != ip) {
+      return { props: { otp : otpFromRedis, ttl: ttl} }
     }else{
-      const otpFromRedis = otpAndIp.split(":")[0];
-      const ipFromRedis = otpAndIp.split(":")[1];
-      if(ipFromRedis != ip) {
-        return { props: { otp : otpFromRedis, ttl: ttl} }
-      }else{
-        const newOtpAndIp = otpFromRedis + ":true";
-        await redis.set(otpId, newOtpAndIp, 'EX', 20*60);
-        return { props: { otp : otpFromRedis, ttl: ttl} }
-      }
+      const newOtpAndIp = otpFromRedis + ":true";
+      await redis.set(otpId, newOtpAndIp, 'EX', 20*60);
+      return { props: { otp : otpFromRedis, ttl: ttl} }
     }
   }
 }
