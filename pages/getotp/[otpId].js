@@ -9,13 +9,13 @@ let redis = new Redis(process.env.REDIS_URL)
 export default function Getotp({otp, ttl, ip}){
   const { data: session } = useSession()
 
-  if (!session) {
-    return (
-      <Layout>
-        <AccessDenied />
-      </Layout>
-    )
-  }
+  // if (!session) {
+  //   return (
+  //     <Layout>
+  //       <AccessDenied />
+  //     </Layout>
+  //   )
+  // }
   if(otp != null){
     return (
       <Layout>
@@ -38,6 +38,9 @@ export default function Getotp({otp, ttl, ip}){
         <h1>OTP Verification</h1>
         <p>
           Your Otp has expired
+        </p>
+        <p>
+          Your IP is: {ip}
         </p>
       </Layout>
     )
