@@ -14,6 +14,6 @@ export default async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000);
     const otpRedis = await redis.set(otpId, otp + ":" + ipaddress, 'EX', 20*60);
     console.log(otpRedis);
-    const link = `${process.env.NOW_URL}/getotp/${otpId}`
+    const link = `${process.env.NEXTAUTH_URL}/getotp/${otpId}`
     res.status(200).json({ link, otp, otpId })
 }
