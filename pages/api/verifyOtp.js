@@ -16,7 +16,6 @@ export default async (req, res) => {
     }else{
         const otpFromRedis = otpAndIp.split(" : ")[0];
         const ipFromRedis = otpAndIp.split(" : ")[1];
-        console.log(ipFromRedis, req.headers['x-forwarded-for'], req.connection.remoteAddress)
         if(otpFromRedis !== otp) {
             res.status(200).json({ status : 'failure', message: 'OTP does not match' })
         }
