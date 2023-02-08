@@ -49,6 +49,7 @@ export async function getServerSideProps(context) {
   
   const {otpId} = context.params;
   const ip = context.req.headers['x-forwarded-for'];
+  console.log("ip when getting otp",ip)
   const otpAndIp = await redis.get(otpId);
   const ttl = await redis.ttl(otpId);
 

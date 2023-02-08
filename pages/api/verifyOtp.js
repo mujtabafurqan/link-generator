@@ -21,7 +21,7 @@ export default async (req, res) => {
             res.status(200).json({ status : 'failure', message: 'OTP does not match' })
         }
         else if(ipFromRedis != 'true') {
-            res.status(200).json({ status : 'failure', message: 'IP does not match' + ipFromRedis + " " + req.headers['x-forwarded-for'] })
+            res.status(200).json({ status : 'failure', message: 'IP does not match'})
         }else{
             res.status(200).json({ status : 'success'})
         }
