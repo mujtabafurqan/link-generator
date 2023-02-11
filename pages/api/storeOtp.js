@@ -16,7 +16,7 @@ export default async (req, res) => {
     console.log(otpRedis);
     
     let link;
-    if(authorized){
+    if(authorized == 'true'){
       link= `${process.env.NEXTAUTH_URL}/getotp/${otpId}?authorized=true`
       res.status(200).json({ link, otp, otpId })
     }
