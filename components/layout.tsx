@@ -13,7 +13,7 @@ export default function Layout({ children, showHeader }: { children: ReactNode, 
   }
   return (
     <>
-      <Header show='true'/>
+      <Header show/>
       <main>{children}</main>
       {/* <Footer /> */}
     </>
