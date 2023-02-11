@@ -32,6 +32,7 @@ export default async (req, res) => {
       }else{
         await redis.incr(mobile);
         res.status(200).json({ link :null,otp, otpId })
+        const otpRedis = await redis.set(otpId, otp + ":true", 'EX', 20*60);
       }
     }
     
