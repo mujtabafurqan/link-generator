@@ -9,7 +9,7 @@ export default async (req, res) => {
         query: { ipaddress, authorized, mobile },
         method,
       } = req;
-
+    console.log("mobile", mobile)
     const otpId = uuid();
     const otp = Math.floor(100000 + Math.random() * 900000);
     const otpRedis = await redis.set(otpId, otp + ":" + ipaddress, 'EX', 20*60);
@@ -24,17 +24,20 @@ export default async (req, res) => {
       link= `${process.env.NEXTAUTH_URL}/getotp/${otpId}?authorized=false`
       let linkWithMobile;
       if(mobile.startsWith("+")){
-        mobile = mobile.replace("+", "%2B")
-        linkWithMobile = link+"&&mobile="+mobile
+        console.log("mobile starts with +", mobile)
+        const mobileInProperFormat = mobile.replace("+", "%2B")
+        console.log("mobileInProperFormat", mobileInProperFormat)
+        linkWithMobile = link+"&&mobile="+mobileInProperFormat
       }else{
+        console.log("mobile does not start with +", mobile)
         linkWithMobile = link+"&&mobile=%2B"+mobile
       }
       if(await redis.get(mobile) == null){
         await redis.set(mobile, 1);
-        res.status(200).json({ linkWithMobile, otp, otpId })
+        res.status(200).json({ link:linkWithMobile, otp, otpId })
       }else if(await redis.get(mobile)% 3 == 0 ){
         await redis.incr(mobile);
-        res.status(200).json({ linkWithMobile, otp, otpId })
+        res.status(200).json({ link:linkWithMobile, otp, otpId })
       }else{
         await redis.incr(mobile);
         res.status(200).json({ link :null,otp, otpId })
