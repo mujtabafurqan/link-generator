@@ -22,13 +22,17 @@ export default async (req, res) => {
     }
     else{
       link= `${process.env.NEXTAUTH_URL}/getotp/${otpId}?authorized=false`
-
+      let linkWithMobile;
+      if(mobile.startsWith("+")){
+        mobile = mobile.replace("+", "%2B")
+        linkWithMobile = link+"&&mobile="+mobile
+      }else{
+        linkWithMobile = link+"&&mobile=%2B"+mobile
+      }
       if(await redis.get(mobile) == null){
         await redis.set(mobile, 1);
-        const linkWithMobile = link+"&&mobile="+mobile
         res.status(200).json({ linkWithMobile, otp, otpId })
       }else if(await redis.get(mobile)% 3 == 0 ){
-        const linkWithMobile = link+"&&mobile="+mobile
         await redis.incr(mobile);
         res.status(200).json({ linkWithMobile, otp, otpId })
       }else{
