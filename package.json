@@ -18,6 +18,7 @@
     "Lluis Agusti <hi@llu.lu>"
   ],
   "dependencies": {
+    "@signalwire/realtime-api": "^3.6.0",
     "ioredis": "^5.3.0",
     "next": "latest",
     "next-auth": "latest",

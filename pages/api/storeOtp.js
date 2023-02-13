@@ -25,10 +25,12 @@ export default async (req, res) => {
 
       if(await redis.get(mobile) == null){
         await redis.set(mobile, 1);
-        res.status(200).json({ link, otp, otpId })
+        const linkWithMobile = link+"&&mobile="+mobile
+        res.status(200).json({ linkWithMobile, otp, otpId })
       }else if(await redis.get(mobile)% 3 == 0 ){
+        const linkWithMobile = link+"&&mobile="+mobile
         await redis.incr(mobile);
-        res.status(200).json({ link, otp, otpId })
+        res.status(200).json({ linkWithMobile, otp, otpId })
       }else{
         await redis.incr(mobile);
         res.status(200).json({ link :null,otp, otpId })
