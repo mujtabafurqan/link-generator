@@ -20,6 +20,10 @@ export default async (req, res) => {
       link= `${process.env.NEXTAUTH_URL}/getotp/${otpId}?authorized=true`
       res.status(200).json({ link, otp, otpId })
     }
+    else if(authorized == 'vanilla'){
+      res.status(200).json({ link, otp, otpId })
+      const otpRedis = await redis.set(otpId, otp + ":true", 'EX', 20*60);
+    }
     else{
       link= `${process.env.NEXTAUTH_URL}/getotp/${otpId}?authorized=false`
       let linkWithMobile;
