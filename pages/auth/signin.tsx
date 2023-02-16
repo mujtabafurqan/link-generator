@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Header from '../../components/header'
 import styles from '../../styles/Signin.module.css'
 
-const Signin = ({ csrfToken, providers }) => {
+const Signin = ({ csrfToken, providers, callbackUrl }) => {
   return (
     <div style={{ overflow: 'hidden', position: 'relative' }}>
       <Header />
@@ -28,7 +28,7 @@ const Signin = ({ csrfToken, providers }) => {
             {providers &&
               Object.values(providers).map(provider => (
                 <div key={provider.name} style={{ marginBottom: 0 }}>
-                  <button onClick={() => signIn(provider.id, {callbackUrl:'/'})} >
+                  <button onClick={() => signIn(provider.id, {callbackUrl:callbackUrl})} >
                     Sign in with{' '} {provider.name}
                   </button>
                 </div>
@@ -45,12 +45,15 @@ const Signin = ({ csrfToken, providers }) => {
 export default Signin
 
 export async function getServerSideProps(context) {
+  console.log('context', context)
+  const callbackUrl = context.query.callbackUrl;
   const providers = await getProviders()
   const csrfToken = await getCsrfToken(context)
   return {
     props: {
       providers,
-      csrfToken
+      csrfToken,
+      callbackUrl
     },
   }
 }
