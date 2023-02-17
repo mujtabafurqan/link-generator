@@ -20,12 +20,12 @@ export default function Getotp({otp, ttl, authorized}){
   const { data: session } = useSession()
 
   useEffect(()=>{
-    if (session == undefined){
+    if (session == undefined || session == null){
       if(authorized=='true'){
         signIn()
       }
     }
-  },[])
+  },[session])
 
   console.log("authorized", authorized)
   console.log("session", session)
