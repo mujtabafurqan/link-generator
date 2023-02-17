@@ -4,9 +4,9 @@ import { useEffect } from "react";
 
 
 export default function AccessDenied() {
-  // useEffect(()=>{
-  //   signIn()
-  // },[])
+  useEffect(()=>{
+    signIn()
+  },[])
   return (
     <>
       <h1>Access Denied</h1>

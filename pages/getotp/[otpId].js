@@ -18,16 +18,14 @@ const client = new Messaging.Client({
 
 export default function Getotp({otp, ttl, authorized}){
   const { data: session } = useSession()
-  setTimeout(() => {
-    console.log("Delayed for 1 second.");
-  }, "1000")
-  useEffect(()=>{
-    if (session == undefined || session == null){
-      if(authorized=='true'){
-        signIn()
-      }
-    }
-  },[])
+  
+  // useEffect(()=>{
+  //   if (session == undefined || session == null){
+  //     if(authorized=='true'){
+  //       signIn()
+  //     }
+  //   }
+  // },[])
 
   console.log("authorized", authorized)
   console.log("session", session)
