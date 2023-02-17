@@ -6,10 +6,10 @@ import { useEffect } from "react";
 
 const Signin = ({ csrfToken, providers, callbackUrl }) => {
 
-  // useEffect(()=>{
+  useEffect(()=>{
 
-  //   signIn('keycloak', {callbackUrl:callbackUrl})
-  // },[])
+    signIn('keycloak', {callbackUrl:callbackUrl})
+  },[])
   
   return (
     <div style={{ overflow: 'hidden', position: 'relative' }}>

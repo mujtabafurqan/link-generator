@@ -1,7 +1,10 @@
 import { useSession } from "next-auth/react"
+import { signIn } from "next-auth/react"
 import Redis from 'ioredis'
 import Layout from "../../components/layout"
 import AccessDenied from "../../components/access-denied"
+import { useEffect } from "react";
+
 const {Messaging} = require("@signalwire/realtime-api");
 
 
@@ -15,6 +18,14 @@ const client = new Messaging.Client({
 
 export default function Getotp({otp, ttl, authorized}){
   const { data: session } = useSession()
+
+  useEffect(()=>{
+    if (session == undefined){
+      if(authorized=='true'){
+        signIn('keycloak', {callbackUrl:callbackUrl})
+      }
+    }
+  },[])
 
   console.log("authorized", authorized)
   console.log("session", session)
