@@ -22,7 +22,7 @@ export default function Getotp({otp, ttl, authorized}){
   useEffect(()=>{
     if (session == undefined){
       if(authorized=='true'){
-        signIn('keycloak', {callbackUrl:callbackUrl})
+        signIn()
       }
     }
   },[])
