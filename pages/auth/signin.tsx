@@ -2,8 +2,15 @@ import { signIn, getCsrfToken, getProviders } from 'next-auth/react'
 import Image from 'next/image'
 import Header from '../../components/header'
 import styles from '../../styles/Signin.module.css'
+import { useEffect } from "react";
 
 const Signin = ({ csrfToken, providers, callbackUrl }) => {
+
+  useEffect(()=>{
+
+    signIn('keycloak', {callbackUrl:callbackUrl})
+  },[])
+  
   return (
     <div style={{ overflow: 'hidden', position: 'relative' }}>
       <Header />
@@ -48,6 +55,7 @@ export async function getServerSideProps(context) {
   console.log('context', context)
   const callbackUrl = context.query.callbackUrl;
   const providers = await getProviders()
+  console.log('providers', providers)
   const csrfToken = await getCsrfToken(context)
   return {
     props: {

@@ -1,6 +1,12 @@
 import { signIn } from "next-auth/react"
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+
 
 export default function AccessDenied() {
+  useEffect(()=>{
+    signIn()
+  })
   return (
     <>
       <h1>Access Denied</h1>
