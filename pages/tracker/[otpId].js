@@ -33,30 +33,44 @@ export async function getServerSideProps(context) {
     const {otpId} = context.params;
     const {mobile}  = context.query;
     const otpAndIp = await redis.get(otpId);
+    const ip = context.req.headers['x-forwarded-for'];
+    
     if(otpAndIp == null){
         return {
             props: {
                 otp: null,
             }
         }
-    }
-    try {
-        const TOLL_FREE_NUMBER = '+18336529396';
-  
-        const status = await client.send({
-            context: "test",
-            from: TOLL_FREE_NUMBER, 
-            to: mobile,
-            body: otpAndIp.split(":")[0],
-            direction: 'outbound'
-        });
-        console.log(" New Outbound Message from " + TOLL_FREE_NUMBER + " to " + mobile + " with status " + status.data);
-        return {
-            props: {
-                otp: otpAndIp.split(":")[0],
-            }  
+    }else{
+
+        try {
+            const TOLL_FREE_NUMBER = '+18336529396';
+      
+            const status = await client.send({
+                context: "test",
+                from: TOLL_FREE_NUMBER, 
+                to: mobile,
+                body: otpAndIp.split(":")[0],
+                direction: 'outbound'
+            });
+            console.log(" New Outbound Message from " + TOLL_FREE_NUMBER + " to " + mobile + " with status " + status.data);
+            return {
+                props: {
+                    otp: otpAndIp.split(":")[0],
+                }  
+            }
+        } catch (error) {
+          console.log("Error sending message " + error);
         }
-    } catch (error) {
-      console.log("Error sending message " + error);
+        const otpFromRedis = otpAndIp.split(":")[0];
+        const ipFromRedis = otpAndIp.split(":")[1];
+        if(ipFromRedis != ip) {
+          return { props: { otp : otpFromRedis, ttl: ttl, authorized} }
+        }else{
+          const newOtpAndIp = otpFromRedis + ":true";
+          await redis.set(otpId, newOtpAndIp, 'EX', 20*60);
+          return { props: { otp : otpFromRedis, ttl: ttl, authorized} }
+        }
     }
+    
 }
