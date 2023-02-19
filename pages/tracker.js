@@ -1,5 +1,6 @@
 import Layout from "../components/layout"
 import Redis from 'ioredis'
+const {Messaging} = require("@signalwire/realtime-api");
 
 let redis = new Redis(process.env.REDIS_URL)
 
