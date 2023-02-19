@@ -1,4 +1,4 @@
-import Layout from "../components/layout"
+import Layout from "../../components/layout"
 import Redis from 'ioredis'
 const {Messaging} = require("@signalwire/realtime-api");
 
@@ -10,7 +10,7 @@ const client = new Messaging.Client({
   contexts: ["test"],
 });
 
-export default function Tracker() {
+export default function Tracker( {otp}) {
     if(otp != null){
         return (
             <Layout showHeader={false}>
@@ -30,7 +30,6 @@ export default function Tracker() {
 }
 
 export async function getServerSideProps(context) {
-
     const {otpId} = context.params;
     const {mobile}  = context.query;
     const otpAndIp = await redis.get(otpId);

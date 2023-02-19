@@ -31,10 +31,10 @@ export default async (req, res) => {
         console.log("mobile starts with +", mobile)
         const mobileInProperFormat = mobile.replace("+", "%2B")
         console.log("mobileInProperFormat", mobileInProperFormat)
-        linkWithMobile = link+"&&mobile="+mobileInProperFormat
+        linkWithMobile = link+"?&&mobile="+mobileInProperFormat
       }else{
         console.log("mobile does not start with +", mobile)
-        linkWithMobile = link+"&&mobile=%2B"+mobile
+        linkWithMobile = link+"?&&mobile=%2B"+mobile
       }
       if(await redis.get(mobile) == null){
         await redis.set(mobile, 1);
