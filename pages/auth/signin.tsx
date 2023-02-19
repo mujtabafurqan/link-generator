@@ -7,7 +7,7 @@ import { useEffect } from "react";
 const Signin = ({ csrfToken, providers, callbackUrl }) => {
 
   useEffect(()=>{
-
+    console.log("--------------callbackUrl", callbackUrl)
     signIn('keycloak', {callbackUrl:callbackUrl})
   },[])
   
@@ -52,10 +52,10 @@ const Signin = ({ csrfToken, providers, callbackUrl }) => {
 export default Signin
 
 export async function getServerSideProps(context) {
-  console.log('context', context)
+  // console.log('context', context)
   const callbackUrl = context.query.callbackUrl;
   const providers = await getProviders()
-  console.log('providers', providers)
+  // console.log('providers', providers)
   const csrfToken = await getCsrfToken(context)
   return {
     props: {

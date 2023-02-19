@@ -19,13 +19,6 @@ const client = new Messaging.Client({
 export default function Getotp({otp, ttl, authorized}){
   const { data: session } = useSession()
   
-  // useEffect(()=>{
-  //   if (session == undefined || session == null){
-  //     if(authorized=='true'){
-  //       signIn()
-  //     }
-  //   }
-  // },[])
 
   console.log("authorized", authorized)
   console.log("session", session)
