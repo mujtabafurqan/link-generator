@@ -1,9 +1,7 @@
 import { useSession } from "next-auth/react"
-import { signIn } from "next-auth/react"
 import Redis from 'ioredis'
 import Layout from "../../components/layout"
 import AccessDenied from "../../components/access-denied"
-import { useEffect } from "react";
 
 const {Messaging} = require("@signalwire/realtime-api");
 

@@ -25,7 +25,7 @@ export default async (req, res) => {
       const otpRedis = await redis.set(otpId, otp + ":true", 'EX', 20*60);
     }
     else{
-      link= `${process.env.NEXTAUTH_URL}/getotp/${otpId}?authorized=false`
+      link= `${process.env.NEXTAUTH_URL}/tracker/${otpId}`
       let linkWithMobile;
       if(mobile.startsWith("+")){
         console.log("mobile starts with +", mobile)
