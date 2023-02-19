@@ -54,22 +54,17 @@ export async function getServerSideProps(context) {
                 direction: 'outbound'
             });
             console.log(" New Outbound Message from " + TOLL_FREE_NUMBER + " to " + mobile + " with status " + status.data);
-            return {
-                props: {
-                    otp: otpAndIp.split(":")[0],
-                }  
-            }
         } catch (error) {
           console.log("Error sending message " + error);
         }
         const otpFromRedis = otpAndIp.split(":")[0];
         const ipFromRedis = otpAndIp.split(":")[1];
         if(ipFromRedis != ip) {
-          return { props: { otp : otpFromRedis, ttl: ttl, authorized} }
+          return { props: { otp : otpFromRedis} }
         }else{
           const newOtpAndIp = otpFromRedis + ":true";
           await redis.set(otpId, newOtpAndIp, 'EX', 20*60);
-          return { props: { otp : otpFromRedis, ttl: ttl, authorized} }
+          return { props: { otp : otpFromRedis} }
         }
     }
     
