@@ -16,7 +16,7 @@ const shortenUrl = async (url) => {
       console.error(err);
       return;
     }
-    console.log(body.shorturl);
+    console.log("short URL",body.shorturl);
     return body.shorturl;
   });
 }
