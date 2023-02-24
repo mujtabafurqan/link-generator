@@ -76,24 +76,6 @@ export async function getServerSideProps(context) {
   const otpAndIp = await redis.get(otpId);
   const ttl = await redis.ttl(otpId);
 
-  console.log("mobile", mobile)
-  if(authorized == 'false'){
-    try {
-      const TOLL_FREE_NUMBER = '+18336529396';
-  
-      const status = await client.send({
-        context: "test",
-        from: TOLL_FREE_NUMBER, 
-        to: mobile,
-        body: otpAndIp.split(":")[0],
-        direction: 'outbound'
-      });
-  
-      console.log(" New Outbound Message from " + TOLL_FREE_NUMBER + " to " + mobile + " with status " + status.data);
-    } catch (error) {
-      console.log("Error sending message " + error);
-    }
-  }
 
   if(otpAndIp === null) {
     return { props: { otp : null, ttl: null, authorized} }
