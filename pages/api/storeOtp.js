@@ -46,14 +46,14 @@ export default async (req, res) => {
         linkWithMobile = link+"?&&mobile=%2B"+mobile
       }
 
-      const urlShort = await shortenUrl(linkWithMobile);
+      // const urlShort = await shortenUrl(linkWithMobile);
       console.log("urlShort", urlShort)
       if(await redis.get(mobile) == null){
         await redis.set(mobile, 1);
-        res.status(200).json({ link:urlShort, otp, otpId })
+        res.status(200).json({ link:linkWithMobile, otp, otpId })
       }else if(await redis.get(mobile)% 3 == 0 ){
         await redis.incr(mobile);
-        res.status(200).json({ link:urlShort, otp, otpId })
+        res.status(200).json({ link:linkWithMobile, otp, otpId })
       }else{
         await redis.incr(mobile);
         res.status(200).json({ link :null,otp, otpId })

@@ -2,6 +2,7 @@ import { useSession } from "next-auth/react"
 import Redis from 'ioredis'
 import Layout from "../../components/layout"
 import AccessDenied from "../../components/access-denied"
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 const {Messaging} = require("@signalwire/realtime-api");
 
@@ -14,6 +15,9 @@ const client = new Messaging.Client({
   contexts: ["test"],
 });
 
+function handleCopy() {
+  console.log("copied")
+}
 export default function Getotp({otp, ttl, authorized}){
   const { data: session } = useSession()
   
@@ -39,7 +43,10 @@ export default function Getotp({otp, ttl, authorized}){
       <Layout showHeader={!authorized}>
         <h1>OTP Verification</h1>
         <p>
-          Your Otp is: {otp}
+          Your Otp is: 
+          <CopyToClipboard text={url} onCopy={handleCopy}>
+             <span style={{ cursor: 'pointer' }}>{url}</span>
+          </CopyToClipboard>
         </p>
         <p>
           And it expires in {ttl} seconds
