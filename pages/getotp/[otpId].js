@@ -1,22 +1,24 @@
-import { useSession } from "next-auth/react"
+import { useSession, useState } from "next-auth/react"
 import Redis from 'ioredis'
 import Layout from "../../components/layout"
 import AccessDenied from "../../components/access-denied"
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import ReactTooltip from 'react-tooltip';
+import { FaCopy, FaCheck } from 'react-icons/fa';
 
 
 let redis = new Redis(process.env.REDIS_URL)
 
-function handleCopy() {
-  console.log("copied")
-}
+
 export default function Getotp({otp, ttl, authorized}){
   const { data: session } = useSession()
-  
+  const [isCopied, setIsCopied] = useState(false);
 
-  console.log("authorized", authorized)
-  console.log("session", session)
+  function handleCopy() {
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000);
+  }
 
   if (session == undefined && authorized == 'true') {
     return (
@@ -32,9 +34,18 @@ export default function Getotp({otp, ttl, authorized}){
         <p>
           Your Otp is: 
           <CopyToClipboard text={otp} onCopy={handleCopy} style={{background: 'lightgray', padding: '5px'}}>
-             <span data-tip="Copy to clipboard" style={{ cursor: 'pointer' }}>{otp}</span>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span style={{ marginRight: '10px' }}>{otp}</span>
+          {isCopied ? (
+            <FaCheck style={{ color: 'lightgray' }} />
+          ) : (
+            <FaCopy
+              data-tip="Copy to clipboard"
+              style={{ cursor: 'pointer', color: 'lightgray' }}
+            />
+          )}
+        </div>
           </CopyToClipboard>
-          <ReactTooltip effect="solid" />
         </p>
         <p>
           And it expires in {ttl} seconds
