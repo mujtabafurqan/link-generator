@@ -3,6 +3,7 @@ import Redis from 'ioredis'
 import Layout from "../../components/layout"
 import AccessDenied from "../../components/access-denied"
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import ReactTooltip from 'react-tooltip';
 
 
 let redis = new Redis(process.env.REDIS_URL)
@@ -31,8 +32,9 @@ export default function Getotp({otp, ttl, authorized}){
         <p>
           Your Otp is: 
           <CopyToClipboard text={otp} onCopy={handleCopy} style={{background: 'lightgray', padding: '5px'}}>
-             <span style={{ cursor: 'pointer' }}>{otp}</span>
+             <span data-tip="Copy to clipboard" style={{ cursor: 'pointer' }}>{otp}</span>
           </CopyToClipboard>
+          <ReactTooltip effect="solid" />
         </p>
         <p>
           And it expires in {ttl} seconds
