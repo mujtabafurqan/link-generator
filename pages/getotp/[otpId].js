@@ -4,16 +4,8 @@ import Layout from "../../components/layout"
 import AccessDenied from "../../components/access-denied"
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-const {Messaging} = require("@signalwire/realtime-api");
-
 
 let redis = new Redis(process.env.REDIS_URL)
-
-const client = new Messaging.Client({
-  project: process.env.SIGNALWIRE_PROJECT_ID,
-  token: process.env.SIGNALWIRE_TOKEN,
-  contexts: ["test"],
-});
 
 function handleCopy() {
   console.log("copied")
