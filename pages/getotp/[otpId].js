@@ -30,8 +30,8 @@ export default function Getotp({otp, ttl, authorized}){
         <h1>OTP Verification</h1>
         <p>
           Your Otp is: 
-          <CopyToClipboard text={url} onCopy={handleCopy}>
-             <span style={{ cursor: 'pointer' }}>{url}</span>
+          <CopyToClipboard text={otp} onCopy={handleCopy}>
+             <span style={{ cursor: 'pointer' }}>{otp}</span>
           </CopyToClipboard>
         </p>
         <p>
