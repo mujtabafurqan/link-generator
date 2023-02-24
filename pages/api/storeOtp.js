@@ -6,7 +6,7 @@ let redis = new Redis(process.env.REDIS_URL)
 
 const shortenUrl = async (url) => {
 
-  const response = await axios.get(`https://is.gd/create.php?format=json&url=${encodeURIComponent(url)}`);
+  const resp = await axios.get(`https://is.gd/create.php?format=json&url=${encodeURIComponent(url)}`);
   return resp.data.shorturl;
 }
 
