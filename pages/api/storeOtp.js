@@ -26,8 +26,7 @@ export default async (req, res) => {
     let link;
     if(authorized == 'true'){
       link= `${process.env.NEXTAUTH_URL}/getotp/${otpId}?authorized=true`
-      const urlShort = await shortenUrl(link);
-      res.status(200).json({ urlShort, otp, otpId })
+      res.status(200).json({ link, otp, otpId })
     }
     else if(authorized == 'vanilla'){
       res.status(200).json({ link, otp, otpId })
