@@ -34,18 +34,17 @@ export default function Getotp({otp, ttl, authorized}){
         <h1>OTP Verification</h1>
         <p>
           Your Otp is: 
-          <CopyToClipboard text={otp} onCopy={handleCopy} style={{background: 'lightgray', padding: '5px'}}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <CopyToClipboard text={otp} onCopy={handleCopy} style={{background: 'lightgray', padding: '15px'}}>
+          
           <span style={{ marginRight: '10px' }}>{otp}</span>
           {isCopied ? (
-            <FaCheck style={{ color: 'lightgray' }} />
+            <FaCheck style={{ color: 'black' }} />
           ) : (
             <FaCopy
               data-tip="Copy to clipboard"
-              style={{ cursor: 'pointer', color: 'lightgray' }}
+              style={{ cursor: 'pointer', color: 'black' }}
             />
           )}
-        </div>
           </CopyToClipboard>
         </p>
         <p>
