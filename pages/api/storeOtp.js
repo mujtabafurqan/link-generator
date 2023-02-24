@@ -1,18 +1,13 @@
 import Redis from 'ioredis'
 import uuid from 'react-uuid';
-const request = require('request');
+const axios = require('axios');
 
 let redis = new Redis(process.env.REDIS_URL)
 
 const shortenUrl = async (url) => {
 
-  const options = {
-    url: `https://is.gd/create.php?format=json&url=${encodeURIComponent(url)}`,
-    json: true
-  };
-
-  const resp = await request.get(options)
-  return resp.body.shorturl;
+  const response = await axios.get(`https://is.gd/create.php?format=json&url=${encodeURIComponent(url)}`);
+  return resp.data.shorturl;
 }
 
 
