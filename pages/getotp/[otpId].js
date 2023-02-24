@@ -24,13 +24,7 @@ export default function Getotp({otp, ttl, authorized}){
 
   console.log("authorized", authorized)
   console.log("session", session)
-  if(authorized=='false'){
-    return (
-      <Layout showHeader={authorized=='true'}>
-        <h1>Please check your phone for your otp</h1>
-      </Layout>
-    )
-  }
+
   if (session == undefined && authorized == 'true') {
     return (
       <Layout>
