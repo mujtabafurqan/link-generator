@@ -1,7 +1,26 @@
 import Redis from 'ioredis'
 import uuid from 'react-uuid';
+const request = require('request');
 
 let redis = new Redis(process.env.REDIS_URL)
+
+const shortenUrl = async (url) => {
+
+  const options = {
+    url: `https://is.gd/create.php?format=json&url=${encodeURIComponent(url)}`,
+    json: true
+  };
+
+  request.get(options, (err, res, body) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log(body.shorturl);
+    return body.shorturl;
+  });
+}
+
 
 export default async (req, res) => {
 
@@ -18,7 +37,8 @@ export default async (req, res) => {
     let link;
     if(authorized == 'true'){
       link= `${process.env.NEXTAUTH_URL}/getotp/${otpId}?authorized=true`
-      res.status(200).json({ link, otp, otpId })
+      const urlShort = await shortenUrl(link);
+      res.status(200).json({ urlShort, otp, otpId })
     }
     else if(authorized == 'vanilla'){
       res.status(200).json({ link, otp, otpId })
@@ -36,12 +56,15 @@ export default async (req, res) => {
         console.log("mobile does not start with +", mobile)
         linkWithMobile = link+"?&&mobile=%2B"+mobile
       }
+
+      const urlShort = await shortenUrl(linkWithMobile);
+
       if(await redis.get(mobile) == null){
         await redis.set(mobile, 1);
-        res.status(200).json({ link:linkWithMobile, otp, otpId })
+        res.status(200).json({ link:urlShort, otp, otpId })
       }else if(await redis.get(mobile)% 3 == 0 ){
         await redis.incr(mobile);
-        res.status(200).json({ link:linkWithMobile, otp, otpId })
+        res.status(200).json({ link:urlShort, otp, otpId })
       }else{
         await redis.incr(mobile);
         res.status(200).json({ link :null,otp, otpId })
