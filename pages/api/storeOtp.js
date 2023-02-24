@@ -58,7 +58,7 @@ export default async (req, res) => {
       }
 
       const urlShort = await shortenUrl(linkWithMobile);
-
+      console.log("urlShort", urlShort)
       if(await redis.get(mobile) == null){
         await redis.set(mobile, 1);
         res.status(200).json({ link:urlShort, otp, otpId })
