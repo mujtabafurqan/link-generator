@@ -11,14 +11,8 @@ const shortenUrl = async (url) => {
     json: true
   };
 
-  request.get(options, (err, res, body) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log("short URL",body.shorturl);
-    return body.shorturl;
-  });
+  const resp = await request.get(options)
+  return resp.body.shorturl;
 }
 
 
