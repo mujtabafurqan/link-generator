@@ -1,67 +1,136 @@
-import { signIn, getCsrfToken, getProviders } from 'next-auth/react'
-import Image from 'next/image'
-import Header from '../../components/header'
-import styles from '../../styles/Signin.module.css'
-import { useEffect } from "react";
+import { signIn, useSession } from 'next-auth/react';
+import { ChangeEvent, KeyboardEventHandler, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/typescript-types';
+import { startAuthentication } from '@simplewebauthn/browser';
+import { startRegistration } from '@simplewebauthn/browser';
 
-const Signin = ({ csrfToken, providers, callbackUrl }) => {
 
-  useEffect(()=>{
-    console.log("--------------callbackUrl", callbackUrl)
-    signIn('keycloak', {callbackUrl:callbackUrl})
-  },[])
-  
-  return (
-    <div style={{ overflow: 'hidden', position: 'relative' }}>
-      <Header />
-      <div className={styles.wrapper} />
-      <div className={styles.content}>
-        <div className={styles.cardWrapper}>
-          {/* <Image src='/otp-icon.svg' width="196px" height="64px" alt='App Logo' style={{ height: '85px', marginBottom: '20px' }} /> */}
-          {/* <Image src='/otp_image.png'/> */}
-          <Image
-            alt="Image Alt"
-            src="/otp_image.png"
-            width="100"
-            height="100"
-          />
-          <div className={styles.cardContent}>
-            <input name='csrfToken' type='hidden' defaultValue={csrfToken} />
-            <input placeholder='Email ' size={10} style={{'width' : '90%'}} />
-            <button className={styles.primaryBtn}>
-              Submit
-            </button>
-            <hr />
-            {providers &&
-              Object.values(providers).map(provider => (
-                <div key={provider.name} style={{ marginBottom: 0 }}>
-                  <button onClick={() => signIn(provider.id, {callbackUrl:callbackUrl})} >
-                    Sign in with{' '} {provider.name}
-                  </button>
-                </div>
-              ))}
-          </div>
-        </div>
-      </div>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src='/login_pattern.svg' alt='Pattern Background' layout='fill' className={styles.styledPattern} />
-    </div>
-  )
-}
+import styles from '../../styles/Home.module.css'
 
-export default Signin
+export default function SignInComponent() {
+    const [email, setEmail] = useState('mujtaba@gmail.com');
+    const [isValid, setIsValid] = useState(false);
 
-export async function getServerSideProps(context) {
-  // console.log('context', context)
-  const callbackUrl = context.query.callbackUrl;
-  const providers = await getProviders()
-  // console.log('providers', providers)
-  const csrfToken = await getCsrfToken(context)
-  return {
-    props: {
-      providers,
-      csrfToken,
-      callbackUrl
-    },
+    const router = useRouter();
+    const session = useSession();
+
+    useEffect(() => {
+      console.log(session)
+        if (session.status === 'authenticated') {
+            router.push('/');
+        }
+    },[session.status])
+
+    // async function signInWithEmail() {
+    //     return signIn('email', { email })
+    // }
+
+    async function signInWithWebauthn() {
+      console.log('signing in with webauthn');
+      const url = new URL(
+          '/api/auth/webauthn/authenticate',
+          window.location.origin,
+      );
+      url.search = new URLSearchParams({ email }).toString();
+      const optionsResponse = await fetch(url.toString());
+      console.log(optionsResponse);
+    
+      if (optionsResponse.status !== 200) {
+          throw new Error('Could not get authentication options from server');
+      }
+      const opt: PublicKeyCredentialRequestOptionsJSON = await optionsResponse.json();
+    
+      if (!opt.allowCredentials || opt.allowCredentials.length === 0) {
+          throw new Error('There is no registered credential.')
+      }
+    
+      const credential = await startAuthentication(opt);
+      
+      await signIn('credentials', {
+          id: credential.id,
+          rawId: credential.rawId,
+          type: credential.type,
+          clientDataJSON: credential.response.clientDataJSON,
+          authenticatorData: credential.response.authenticatorData,
+          signature: credential.response.signature,
+          userHandle: credential.response.userHandle,
+      })
+      // router.push('/getotp/asgfgkaj');
+    }
+
+
+    async function registerWebauthn() {
+      console.log('registering webauthn');
+      const optionsResponse = await fetch('/api/auth/webauthn/register');
+      if (optionsResponse.status !== 200) {
+          alert('Could not get registration options from server');
+          return;
+      }
+      const opt = await optionsResponse.json();
+
+      try {
+          const credential = await startRegistration(opt)
+
+          const response = await fetch('/api/auth/webauthn/register', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(credential),
+              credentials: 'include'
+          });
+          if (response.status != 201) {
+              alert('Could not register webauthn credentials.');
+          } else {
+              alert('Your webauthn credentials have been registered.')
+          }
+      } catch (err) {
+          alert(`Registration failed. ${(err as Error).message}`);
+      }
+
   }
+    async function handleSignIn() {
+      console.log('handle sign in');
+      try {
+          await signInWithWebauthn();
+
+      } catch (error) {
+          console.log(error);
+          await registerWebauthn();
+      }
+  }
+
+    // const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (e) => {
+    //     if (e.key === 'Enter') {
+    //         return handleSignIn();
+    //     }
+    // }
+
+    // function updateEmail(e: ChangeEvent<HTMLInputElement>) {
+    //     setIsValid(e.target.validity.valid)
+    //     setEmail(e.target.value);
+    // }
+
+    return (
+        <div className={styles.container}>
+            <main className={styles.main}>
+                <form onSubmit={e => e.preventDefault()}>
+                    <input
+                        name="email"
+                        type="email"
+                        id="email"
+                        autoComplete="home email"
+                        placeholder="Enter your email"
+                        // value={email}
+                        // onChange={updateEmail}
+                        // onKeyDown={handleKeyDown}
+                    />
+                    <button type="button" onClick={handleSignIn}>
+                        Sign in
+                    </button>
+                </form>
+            </main>
+        </div>
+    )
 }

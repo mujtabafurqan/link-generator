@@ -1,31 +1,100 @@
-import NextAuth, { NextAuthOptions } from "next-auth"
-import KeycloakProvider from "next-auth/providers/keycloak";
+import { NextApiRequest, NextApiResponse } from 'next';
+import NextAuth from 'next-auth';
+import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
+import { getDb } from '../../../lib/mongodb';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { verifyAuthenticationResponse } from '@simplewebauthn/server';
+import base64url from 'base64url';
+import { Document } from 'mongodb';
+import { DbCredential, getChallenge } from '../../../lib/webauthn';
 
+const domain = process.env.APP_DOMAIN!;
+const origin = process.env.APP_ORIGIN!;
+const webauthnDbName = process.env.WEBAUTHN_DBNAME!;
+const nextAuthDbName = process.env.NEXT_AUTH_DBNAME!;
 
-export const authOptions: NextAuthOptions = {
+export default async function auth(req: NextApiRequest, res: NextApiResponse) {
+    return NextAuth(req, res, {
+        providers: [
+            CredentialsProvider({
+                name: 'webauthn',
+                credentials: {},
+                async authorize(cred, req) {
+                    const {
+                        id,
+                        rawId,
+                        type,
+                        clientDataJSON,
+                        authenticatorData,
+                        signature,
+                        userHandle,
+                    } = req.body;
 
-  providers: [
-    KeycloakProvider({
-      clientId: process.env.KEYCLOAK_CLIENT_ID,
-      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET,
-      issuer: process.env.KEYCLOAK_ISSUER,
-    }),
-  ],
-  theme: {
-    colorScheme: "light",
-  },
-  callbacks: {
-    async jwt({ token }) {
-      token.userRole = "admin"
-      return token
-    },
-  },pages: {
-    signIn: '/auth/signin',
-  },
-  session: {
-    maxAge: 60,
-  }
-  
+                    const credential = {
+                        id,
+                        rawId,
+                        type,
+                        response: {
+                            clientDataJSON,
+                            authenticatorData,
+                            signature,
+                            userHandle,
+                        },
+
+                    };
+                    const db = await getDb(webauthnDbName);
+                    const authenticator = await db.collection<DbCredential & Document>('credentials').findOne({
+                        credentialID: credential.id
+                    });
+                    if (!authenticator) {
+                        return null;
+                    }
+                    const challenge = await getChallenge(authenticator.userID);
+                    if (!challenge) {
+                        return null;
+                    }
+                    try {
+                      const result = await verifyAuthenticationResponse({
+                            response: credential as any,
+                            expectedChallenge: challenge.value,
+                            expectedOrigin: origin,
+                            expectedRPID: domain,
+                            authenticator: {
+                                credentialPublicKey: authenticator.credentialPublicKey.buffer as Buffer,
+                                credentialID: base64url.toBuffer(authenticator.credentialID),
+                                counter: authenticator.counter,
+                            },
+                        });
+                        
+                        const { verified, authenticationInfo: info } = result;  
+                        if (!verified || !info) {
+                            return null;
+                        }
+                        await db.collection<DbCredential>('credentials').updateOne({
+                            _id: authenticator._id
+                        }, {
+                            $set: {
+                                counter: info.newCounter
+                            }
+                        })
+                    } catch (err) {
+                        console.log(err);
+                        return null;
+                    }
+                    console.log("asfafafa",authenticator.userID);
+                    return { id: authenticator.userID, email: authenticator.userID };
+                }
+            })
+        ],
+
+        adapter: MongoDBAdapter({
+            db: await getDb(nextAuthDbName)
+        }),
+        session: {
+          jwt: true,
+        },
+        pages: {
+            signIn: '/auth/signin',
+        }
+    })
 }
-
-export default NextAuth(authOptions)
