@@ -2,14 +2,14 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { generateRegistrationOptions, verifyRegistrationResponse } from '@simplewebauthn/server';
 import { getSession } from 'next-auth/react';
 import { getDb } from '../../../../lib/mongodb';
-import { RegistrationCredentialJSON } from '@simplewebauthn/typescript-types';
+import { RegistrationCredential } from '@simplewebauthn/typescript-types';
 import { DbCredential, getChallenge, saveChallenge, saveCredentials } from '../../../../lib/webauthn';
 
 const domain = process.env.APP_DOMAIN!;
 const origin = process.env.APP_ORIGIN!;
 const appName = process.env.APP_NAME!;
 const dbName = process.env.WEBAUTHN_DBNAME!;
-
+const email = 'mujtaba@gmail.com';
 /**
  * handles GET /api/auth/webauthn/register.
  *
@@ -17,10 +17,10 @@ const dbName = process.env.WEBAUTHN_DBNAME!;
  */
 async function handlePreRegister(req: NextApiRequest, res: NextApiResponse) {
     const session = await getSession({ req });
-    const email = session?.user?.email;
-    if (!email) {
-        return res.status(401).json({ message: 'Authentication is required' });
-    }
+    // const email = session?.user?.email;
+    // if (!email) {
+    //     return res.status(401).json({ message: 'Authentication is required' });
+    // }
     const db = await getDb(dbName);
     const credentials = await db.collection<DbCredential>('credentials').find({
         userID: email,
@@ -59,18 +59,21 @@ async function handleRegister(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    const session = await getSession({ req });
-    const email = session?.user?.email;
-    if (!email) {
-        return res.status(401).json({ success: false, message: 'You are not connected.' });
-    }
+    // const session = await getSession({ req });
+    // const email = session?.user?.email;
+    // if (!email) {
+    //     return res.status(401).json({ success: false, message: 'You are not connected.' });
+    // }
+
     const challenge = await getChallenge(email);
+    console.log("Challenge   ",challenge);
     if (!challenge) {
         return res.status(401).json({ success: false, message: 'Pre-registration is required.' });
     }
-    const credential: RegistrationCredentialJSON = req.body;
+    const credential: RegistrationCredential = req.body;
+    console.log("Credential   ",credential);
     const { verified, registrationInfo: info } = await verifyRegistrationResponse({
-        credential,
+        response: credential,
         expectedRPID: domain,
         expectedOrigin: origin,
         expectedChallenge: challenge.value,
