@@ -33,13 +33,13 @@ export default function SignInComponent() {
     //     return signIn('email', { email })
     // }
 
-    async function signInWithWebauthn() {
+    async function signInWithWebauthn(localEmail) {
       console.log('signing in with webauthn');
       const url = new URL(
-          '/api/auth/webauthn/authenticate',
+          '/api/auth/webauthn/authenticate?email=' + cleanMobile(localEmail),
           window.location.origin,
       );
-      url.search = new URLSearchParams({ email }).toString();
+      url.search = new URLSearchParams({ localEmail }).toString();
       const optionsResponse = await fetch(url.toString());
       console.log(optionsResponse);
     
@@ -106,7 +106,7 @@ export default function SignInComponent() {
       console.log('router', router.query.mobile);
       setEmail(router.query.mobile)
       try {
-          await signInWithWebauthn();
+          await signInWithWebauthn(router.query.mobile);
 
       } catch (error) {
           console.log(error);
