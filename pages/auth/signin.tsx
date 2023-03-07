@@ -70,9 +70,9 @@ export default function SignInComponent() {
     }
 
 
-    async function registerWebauthn() {
+    async function registerWebauthn(localEmail) {
       console.log('registering webauthn');
-      const optionsResponse = await fetch('/api/auth/webauthn/register?email=' + cleanMobile(email));
+      const optionsResponse = await fetch('/api/auth/webauthn/register?email=' + cleanMobile(localEmail));
       if (optionsResponse.status !== 200) {
           alert('Could not get registration options from server');
           return;
@@ -83,7 +83,7 @@ export default function SignInComponent() {
           const credential = await startRegistration(opt)
           console.log('credential', credential);
 
-          const response = await fetch('/api/auth/webauthn/register?email='+ cleanMobile(email), {
+          const response = await fetch('/api/auth/webauthn/register?email='+ cleanMobile(localEmail), {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ export default function SignInComponent() {
 
       } catch (error) {
           console.log(error);
-          await registerWebauthn();
+          await registerWebauthn(router.query.mobile);
       }
   }
 
