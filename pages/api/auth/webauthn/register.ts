@@ -2,20 +2,23 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { generateRegistrationOptions, verifyRegistrationResponse } from '@simplewebauthn/server';
 import { getSession } from 'next-auth/react';
 import { getDb } from '../../../../lib/mongodb';
-import { RegistrationCredential } from '@simplewebauthn/typescript-types';
+import { RegistrationCredentialJSON } from '@simplewebauthn/typescript-types';
 import { DbCredential, getChallenge, saveChallenge, saveCredentials } from '../../../../lib/webauthn';
 
 const domain = process.env.APP_DOMAIN!;
 const origin = process.env.APP_ORIGIN!;
 const appName = process.env.APP_NAME!;
 const dbName = process.env.WEBAUTHN_DBNAME!;
-const email = 'mujtaba@gmail.com';
+// const email = 'mujtaba@gmail.com';
 /**
  * handles GET /api/auth/webauthn/register.
  *
  * This function generates and returns registration options.
  */
 async function handlePreRegister(req: NextApiRequest, res: NextApiResponse) {
+    console.log('handlePreRegister')
+    console.log(req.query.email)
+    const email = req.query.email as string;
     const session = await getSession({ req });
     // const email = session?.user?.email;
     // if (!email) {
@@ -65,15 +68,16 @@ async function handleRegister(
     //     return res.status(401).json({ success: false, message: 'You are not connected.' });
     // }
 
+    console.log('handleRegister')
+    console.log(req.query.email)
+    const email = req.query.email as string;
     const challenge = await getChallenge(email);
-    console.log("Challenge   ",challenge);
     if (!challenge) {
         return res.status(401).json({ success: false, message: 'Pre-registration is required.' });
     }
-    const credential: RegistrationCredential = req.body;
-    console.log("Credential   ",credential);
+    const credential: RegistrationCredentialJSON = req.body;
     const { verified, registrationInfo: info } = await verifyRegistrationResponse({
-        response: credential,
+        credential,
         expectedRPID: domain,
         expectedOrigin: origin,
         expectedChallenge: challenge.value,

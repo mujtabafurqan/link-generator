@@ -30,6 +30,7 @@ export default function Tracker( {otp}) {
 }
 
 export async function getServerSideProps(context) {
+    console.log("number", context.query.mobile)
     const {otpId} = context.params;
     const {mobile}  = context.query;
     const otpAndIp = await redis.get(otpId);

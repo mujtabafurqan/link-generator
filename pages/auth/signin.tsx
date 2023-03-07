@@ -8,6 +8,13 @@ import { startRegistration } from '@simplewebauthn/browser';
 
 import styles from '../../styles/Home.module.css'
 
+const cleanMobile = (mobile: string) => {
+    if(mobile.startsWith('+')) {
+        mobile = mobile.replace('+', '%2B');
+    }
+    return mobile;
+}
+
 export default function SignInComponent() {
     const [email, setEmail] = useState('mujtaba@gmail.com');
     const [isValid, setIsValid] = useState(false);
@@ -15,12 +22,12 @@ export default function SignInComponent() {
     const router = useRouter();
     const session = useSession();
 
-    useEffect(() => {
-      console.log(session)
-        if (session.status === 'authenticated') {
-            router.push('/');
-        }
-    },[session.status])
+    // useEffect(() => {
+    //   console.log(session)
+    //     if (session.status === 'authenticated') {
+    //         router.push('/');
+    //     }
+    // },[session.status])
 
     // async function signInWithEmail() {
     //     return signIn('email', { email })
@@ -44,9 +51,11 @@ export default function SignInComponent() {
       if (!opt.allowCredentials || opt.allowCredentials.length === 0) {
           throw new Error('There is no registered credential.')
       }
-    
+      
+      console.log("reached here");
       const credential = await startAuthentication(opt);
       
+      console.log("callback url", router.query.callbackUrl)
       await signIn('credentials', {
           id: credential.id,
           rawId: credential.rawId,
@@ -55,6 +64,7 @@ export default function SignInComponent() {
           authenticatorData: credential.response.authenticatorData,
           signature: credential.response.signature,
           userHandle: credential.response.userHandle,
+          callbackUrl: router.query.callbackUrl as string,
       })
       // router.push('/getotp/asgfgkaj');
     }
@@ -62,7 +72,7 @@ export default function SignInComponent() {
 
     async function registerWebauthn() {
       console.log('registering webauthn');
-      const optionsResponse = await fetch('/api/auth/webauthn/register');
+      const optionsResponse = await fetch('/api/auth/webauthn/register?email=' + cleanMobile(email));
       if (optionsResponse.status !== 200) {
           alert('Could not get registration options from server');
           return;
@@ -71,8 +81,9 @@ export default function SignInComponent() {
 
       try {
           const credential = await startRegistration(opt)
+          console.log('credential', credential);
 
-          const response = await fetch('/api/auth/webauthn/register', {
+          const response = await fetch('/api/auth/webauthn/register?email='+ cleanMobile(email), {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json',
@@ -92,6 +103,8 @@ export default function SignInComponent() {
   }
     async function handleSignIn() {
       console.log('handle sign in');
+      console.log('router', router.query.mobile);
+      setEmail(router.query.mobile)
       try {
           await signInWithWebauthn();
 
@@ -116,7 +129,7 @@ export default function SignInComponent() {
         <div className={styles.container}>
             <main className={styles.main}>
                 <form onSubmit={e => e.preventDefault()}>
-                    <input
+                    {/* <input
                         name="email"
                         type="email"
                         id="email"
@@ -125,7 +138,7 @@ export default function SignInComponent() {
                         // value={email}
                         // onChange={updateEmail}
                         // onKeyDown={handleKeyDown}
-                    />
+                    /> */}
                     <button type="button" onClick={handleSignIn}>
                         Sign in
                     </button>

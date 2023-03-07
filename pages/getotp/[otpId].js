@@ -1,18 +1,20 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import Redis from 'ioredis'
 import Layout from "../../components/layout"
 import AccessDenied from "../../components/access-denied"
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FaCopy, FaCheck } from 'react-icons/fa';
+import { signIn } from "next-auth/react"
 
 
 let redis = new Redis(process.env.REDIS_URL)
 
 
-export default function Getotp({otp, ttl, authorized}){
+export default function Getotp({otp, ttl, authorized, mobile}){
   const { data: session } = useSession()
   const [isCopied, setIsCopied] = useState(false);
+
 
   function handleCopy() {
     setIsCopied(true);
@@ -24,7 +26,7 @@ export default function Getotp({otp, ttl, authorized}){
   if (session == undefined && authorized == 'true') {
     return (
       <Layout>
-        <AccessDenied />
+        <AccessDenied mobile={mobile}/>
       </Layout>
     )
   }
@@ -70,24 +72,28 @@ export default function Getotp({otp, ttl, authorized}){
 export async function getServerSideProps(context) {
   
   const {otpId} = context.params;
-  const {authorized, mobile}  = context.query;
+  const {authorized}  = context.query;
+  let mobile = "";
+  if(context.query.mobile !== undefined){
+    mobile  = context.query.mobile;
+  }
   const ip = context.req.headers['x-forwarded-for'];
   console.log("ip when getting otp",ip)
   const otpAndIp = await redis.get(otpId);
   const ttl = await redis.ttl(otpId);
 
-
+  console.log("mobile----", mobile)
   if(otpAndIp === null) {
-    return { props: { otp : null, ttl: null, authorized} }
+    return { props: { otp : null, ttl: null, authorized, mobile} }
   }else{
     const otpFromRedis = otpAndIp.split(":")[0];
     const ipFromRedis = otpAndIp.split(":")[1];
     if(ipFromRedis != ip) {
-      return { props: { otp : otpFromRedis, ttl: ttl, authorized} }
+      return { props: { otp : otpFromRedis, ttl: ttl, authorized, mobile} }
     }else{
       const newOtpAndIp = otpFromRedis + ":true";
       await redis.set(otpId, newOtpAndIp, 'EX', 20*60);
-      return { props: { otp : otpFromRedis, ttl: ttl, authorized} }
+      return { props: { otp : otpFromRedis, ttl: ttl, authorized, mobile} }
     }
   }
 }

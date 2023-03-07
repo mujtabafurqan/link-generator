@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-
+// next.config.js
 const withTM = require('next-transpile-modules')(['@simplewebauthn/browser']); // pass the modules you would like to see transpiled
 
 module.exports = withTM({
@@ -12,11 +12,5 @@ module.exports = withTM({
     // !! WARN !!
     ignoreBuildErrors: true,
   },
-  webpack: (config) => {
-    // this will override the experiments
-    config.experiments = { ...config.experiments, topLevelAwait: true };
-    // this will just update topLevelAwait property of config.experiments
-    // config.experiments.topLevelAwait = true 
-    return config;
-  },
+
 });

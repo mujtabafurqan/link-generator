@@ -55,7 +55,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                     }
                     try {
                       const result = await verifyAuthenticationResponse({
-                            response: credential as any,
+                            credential: credential as any,
                             expectedChallenge: challenge.value,
                             expectedOrigin: origin,
                             expectedRPID: domain,

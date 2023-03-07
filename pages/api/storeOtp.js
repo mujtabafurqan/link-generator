@@ -25,7 +25,11 @@ export default async (req, res) => {
     
     let link;
     if(authorized == 'true'){
-      link= `${process.env.NEXTAUTH_URL}/getotp/${otpId}?authorized=true`
+      let mobileInProperFormat = mobile;
+      if(mobile.startsWith("+")){ 
+        mobileInProperFormat = mobile.replace("+", "%2B")
+      }
+      link= `${process.env.NEXTAUTH_URL}/getotp/${otpId}?authorized=true&&mobile=${mobile}`
       res.status(200).json({ link, otp, otpId })
     }
     else if(authorized == 'vanilla'){
@@ -39,14 +43,14 @@ export default async (req, res) => {
         console.log("mobile starts with +", mobile)
         const mobileInProperFormat = mobile.replace("+", "%2B")
         console.log("mobileInProperFormat", mobileInProperFormat)
-        linkWithMobile = link+"?&&mobile="+mobileInProperFormat
+        linkWithMobile = link+"?mobile="+mobileInProperFormat
       }else{
         console.log("mobile does not start with +", mobile)
-        linkWithMobile = link+"?&&mobile=%2B"+mobile
+        linkWithMobile = link+"?mobile=%2B"+mobile
       }
 
       // const urlShort = await shortenUrl(linkWithMobile);
-      console.log("urlShort", urlShort)
+      // console.log("urlShort", urlShort)
       if(await redis.get(mobile) == null){
         await redis.set(mobile, 1);
         res.status(200).json({ link:linkWithMobile, otp, otpId })
