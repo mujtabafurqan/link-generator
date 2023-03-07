@@ -25,11 +25,7 @@ export default async (req, res) => {
     
     let link;
     if(authorized == 'true'){
-      let mobileInProperFormat = mobile;
-      if(mobile.startsWith("+")){ 
-        mobileInProperFormat = mobile.replace("+", "%2B")
-      }
-      link= `${process.env.NEXTAUTH_URL}/getotp/${otpId}?authorized=true&&mobile=${mobile}`
+      link= `${process.env.NEXTAUTH_URL}/getotp/${otpId}?authorized=true`
       res.status(200).json({ link, otp, otpId })
     }
     else if(authorized == 'vanilla'){
