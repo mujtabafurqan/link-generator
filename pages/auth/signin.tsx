@@ -34,14 +34,13 @@ export default function SignInComponent() {
     // }
 
     async function signInWithWebauthn(localEmail) {
-    
-      localEmail = cleanMobile(localEmail);
       console.log('signing in with webauthn');
       const url = new URL(
           '/api/auth/webauthn/authenticate',
           window.location.origin,
       );
-      url.search = new URLSearchParams({ localEmail }).toString();
+      url.search = new URLSearchParams({ email:localEmail }).toString();
+      console.log("url",url.toString());
       const optionsResponse = await fetch(url.toString());
       console.log(optionsResponse);
     
