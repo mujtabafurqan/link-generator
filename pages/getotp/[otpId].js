@@ -33,7 +33,7 @@ export default function Getotp({otp, ttl, authorized, mobile}){
   if(otp != null){
     return (
       <Layout showHeader={!authorized}>
-        <h2>OTP Verification</h2>
+        <h3>OTP Verification</h3>
         <p>
           Your Otp is: 
           <CopyToClipboard text={otp} onCopy={handleCopy} >
