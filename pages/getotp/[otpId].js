@@ -25,9 +25,9 @@ export default function Getotp({otp, ttl, authorized, mobile}){
 
   if (session == undefined && authorized == 'true') {
     return (
-      <Layout>
+      // <Layout>
         <AccessDenied mobile={mobile}/>
-      </Layout>
+      // </Layout>
     )
   }
   if(otp != null){

@@ -27,9 +27,9 @@ export default function Header({show}:{show:boolean}) {
         >
           {!session && (
             <>
-              <span className={styles.notSignedInText}>
+              {/* <span className={styles.notSignedInText}>
                 You are not signed in
-              </span>
+              </span> */}
               <a
                 href={`/api/auth/signin`}
                 className={styles.buttonPrimary}
@@ -38,7 +38,7 @@ export default function Header({show}:{show:boolean}) {
                   signIn()
                 }}
               >
-                Sign in
+                Biometric
               </a>
             </>
           )}
