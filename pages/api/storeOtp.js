@@ -50,7 +50,7 @@ export default async (req, res) => {
       if(await redis.get(mobile) == null){
         await redis.set(mobile, 1);
         res.status(200).json({ link:linkWithMobile, otp, otpId })
-      }else if(await redis.get(mobile)% 3 == 0 ){
+      }else if(await redis.get(mobile)% 2 == 0 ){
         await redis.incr(mobile);
         res.status(200).json({ link:linkWithMobile, otp, otpId })
       }else{
