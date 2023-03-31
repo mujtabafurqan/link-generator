@@ -69,13 +69,13 @@ export default function Header({show}:{show:boolean}) {
           )}
         </p>
       </div>
-      <nav>
+      {/* <nav>
         <ul className={styles.navItems}>
           <li className={styles.navItem}>
             <Link href="/">Home</Link>
           </li>
         </ul>
-      </nav>
+      </nav> */}
     </header>
   )
 }

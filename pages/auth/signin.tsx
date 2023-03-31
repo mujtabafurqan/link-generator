@@ -140,7 +140,7 @@ export default function SignInComponent() {
                         // onKeyDown={handleKeyDown}
                     /> */}
                     <button className={styles.signedInStatus} type="button" onClick={handleSignIn} style={{}}>
-                        Sign in
+                        Authorize
                     </button>
                 </form>
             </main>
