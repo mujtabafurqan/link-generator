@@ -39,7 +39,7 @@ export async function getServerSideProps(context) {
     if(otpAndIp == null){
         return {
             props: {
-                otp: null,
+                otp: otpFromRedis,
             }
         }
     }else{
