@@ -10,10 +10,10 @@ export default async (req, res) => {
       } = req;
     console.log("mobile", mobile)
     const otpAndIp = await redis.get(otpId);
-    console.log("aigsdjshdsagd"+ await redis.get(mobile+"-status")); 
+    console.log("aigsdjshdsagd"+ await redis.get("+"+mobile+"-status")); 
     if(otpAndIp === null) {
         res.status(200).json({ status : 'failure', message: 'OTP expired' })
-    }else if(await redis.get(mobile+"-status") == false){
+    }else if(await redis.get("+"+mobile+"-status") == false){
         res.status(200).json({ status : 'failure', message: 'IP Mismatch. Please request a tracker Link to verify again'})
     }
     else{
