@@ -8,9 +8,9 @@ export default async (req, res) => {
         query: { otpId, otp, mobile },
         method,
       } = req;
-
+    console.log("mobile", mobile)
     const otpAndIp = await redis.get(otpId);
-    console.log("aigsdjshdsagd"+await redis.get(mobile+"-status")); 
+    console.log("aigsdjshdsagd"+ await redis.get(mobile+"-status")); 
     if(otpAndIp === null) {
         res.status(200).json({ status : 'failure', message: 'OTP expired' })
     }else if(await redis.get(mobile+"-status") == false){
