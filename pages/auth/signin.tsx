@@ -142,7 +142,7 @@ export default function SignInComponent() {
                         Authorize
                     </button> */}
                     <header>
-                        <div className={styles.signedInStatus}>
+                        <div className={styles.authorizeButton}>
                                 <a
                                     href={`/api/auth/signin`}
                                     className={styles.buttonPrimary}

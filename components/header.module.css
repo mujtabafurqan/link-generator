@@ -100,4 +100,7 @@
   padding: 0.7rem 1.4rem;
   width: 116;
   height: 45;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
