@@ -143,7 +143,8 @@ export default function SignInComponent() {
                     </button> */}
                     <header>
                         <div style={{backgroundColor: '#346df1',borderColor: '#346df1',color: '#fff',borderRadius: '0.25rem',
-                                        textDecoration: 'none', width: 116,height: 45,display: 'flex',justifyContent: 'center',alignItems: 'center'}}>
+                                        textDecoration: 'none', width: 116,height: 45,display: 'flex',justifyContent: 'center',alignItems: 'center',
+                                        fontWeight: 500, fontSize:'1rem'}}>
                                 <a
                                     href={`/api/auth/signin`}
                                     className={styles.buttonPrimary}
