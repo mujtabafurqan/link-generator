@@ -146,8 +146,9 @@ export default function SignInComponent() {
                             e.preventDefault()
                             handleSignIn()
                             }}
+                            style={{width: '116', height: '45'}}
                         >
-                            Authorize
+                        Authorize
                         </a>
                     </div>
                 </form>
