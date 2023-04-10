@@ -33,6 +33,7 @@ export default async (req, res) => {
     else if(authorized == 'vanilla'){
       res.status(200).json({ link, otp, otpId })
       const otpRedis = await redis.set(otpId, otp + ":true", 'EX', 20*60);
+      await redis.set(mobile+"-status", true);
     }
     else{
       link= `${process.env.NEXTAUTH_URL}/tracker/${otpId}`
