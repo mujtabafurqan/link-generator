@@ -138,17 +138,18 @@ export default function SignInComponent() {
                         // onChange={updateEmail}
                         // onKeyDown={handleKeyDown}
                     /> */}
-                    
-                    <a
-                        href={``}
-                        className={styles.buttonPrimary}
-                        onClick={(e) => {
-                        e.preventDefault()
-                        handleSignIn()
-                        }}
-                    >
-                        Authorize
-                    </a>
+                    <div className={styles.signedInStatus}>
+                        <a
+                            href={``}
+                            className={styles.buttonPrimary}
+                            onClick={(e) => {
+                            e.preventDefault()
+                            handleSignIn()
+                            }}
+                        >
+                            Authorize
+                        </a>
+                    </div>
                 </form>
             </main>
         </div>
