@@ -142,7 +142,8 @@ export default function SignInComponent() {
                         Authorize
                     </button> */}
                     <header>
-                        <div className={styles.authorizeButton}>
+                        <div style={{backgroundColor: '#346df1',borderColor: '#346df1',color: '#fff',borderRadius: '0.25rem',
+                                        textDecoration: 'none', width: 116,height: 45,display: 'flex',justifyContent: 'center',alignItems: 'center'}}>
                                 <a
                                     href={`/api/auth/signin`}
                                     className={styles.buttonPrimary}
