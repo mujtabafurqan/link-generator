@@ -26,6 +26,8 @@ export default async (req, res) => {
     let link;
     if(authorized == 'true'){
       link= `${process.env.NEXTAUTH_URL}/getotp/${otpId}?authorized=true`
+      if( !mobile.startsWith("+")){ mobile = "+"+mobile}
+      await redis.set(mobile+"-status", true);
       res.status(200).json({ link, otp, otpId })
     }
     else if(authorized == 'vanilla'){
@@ -56,7 +58,10 @@ export default async (req, res) => {
       }else{
         await redis.incr(mobile);
         res.status(200).json({ link :null,otp, otpId })
-        const otpRedis = await redis.set(otpId, otp + ":true", 'EX', 20*60);
+        await redis.set(otpId, otp + ":true", 'EX', 20*60);
+        if(await redis.get(mobile+"-status") == null){
+          await redis.set(mobile+"-status", true);
+        }
       }
     }
     
