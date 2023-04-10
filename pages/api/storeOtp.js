@@ -22,19 +22,17 @@ export default async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000);
     const otpRedis = await redis.set(otpId, otp + ":" + ipaddress, 'EX', 20*60);
     console.log(otpRedis);
-    let mobileplus;
+    const mobileplus = mobile.replace(" ", "+")
+    console.log("mobileplus", mobileplus)
     let link;
     if(authorized == 'true'){
       link= `${process.env.NEXTAUTH_URL}/getotp/${otpId}?authorized=true`
-      mobileplus = mobile.replace(" ", "+")
       await redis.set(mobileplus+"-status", true);
       res.status(200).json({ link, otp, otpId })
     }
     else if(authorized == 'vanilla'){
       res.status(200).json({ link, otp, otpId })
       const otpRedis = await redis.set(otpId, otp + ":true", 'EX', 20*60);
-      mobileplus = mobile.replace(" ", "+")
-      console.log("mobileplus", mobileplus)
       await redis.set(mobileplus+"-status", true);
     }
     else{
