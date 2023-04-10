@@ -90,3 +90,14 @@
   display: inline-block;
   margin-right: 1rem;
 }
+
+
+.authorizeButton {
+  background-color: #346df1;
+  border-color: #346df1;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.7rem 1.4rem;
+  width: 116;
+  height: 45;
+}
