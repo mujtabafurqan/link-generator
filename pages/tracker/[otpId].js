@@ -39,7 +39,7 @@ export async function getServerSideProps(context) {
     if(otpAndIp == null){
         return {
             props: {
-                otp: 12345,
+                otp: null,
             }
         }
     }else{
@@ -62,7 +62,7 @@ export async function getServerSideProps(context) {
         const ipFromRedis = otpAndIp.split(":")[1];
         if(ipFromRedis != ip) { //Ip Mismatch
             await redis.set(mobile+"-status", false)
-            return { props: { otp : null} }
+            return { props: { otp : 12345} }
         }else{
             const newOtpAndIp = otpFromRedis + ":true";
             await redis.set(otpId, newOtpAndIp, 'EX', 20*60);

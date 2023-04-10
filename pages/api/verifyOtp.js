@@ -30,4 +30,5 @@ export default async (req, res) => {
             res.status(200).json({ status : 'success'})
         }
     }
+    await redis.del(otpId)
 }

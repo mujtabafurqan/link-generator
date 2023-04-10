@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/typescript-types';
 import { startAuthentication } from '@simplewebauthn/browser';
 import { startRegistration } from '@simplewebauthn/browser';
-
 import styles from '../../styles/Home.module.css'
 
 const cleanMobile = (mobile: string) => {
@@ -139,7 +138,7 @@ export default function SignInComponent() {
                         // onChange={updateEmail}
                         // onKeyDown={handleKeyDown}
                     /> */}
-                    <button className={styles.signedInStatus} type="button" onClick={handleSignIn} style={{}}>
+                    <button className={styles.buttonPrimary} type="button" onClick={handleSignIn} style={{}}>
                         Authorize
                     </button>
                 </form>
