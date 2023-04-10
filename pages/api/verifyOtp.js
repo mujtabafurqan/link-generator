@@ -14,7 +14,7 @@ export default async (req, res) => {
     console.log("aigsdjshdsagd"+ await redis.get(`${mobileplus}-status`)); 
     if(otpAndIp === null) {
         res.status(200).json({ status : 'failure', message: 'OTP expired' })
-    }else if(await redis.get(`${mobileplus}-status`) == false){
+    }else if(await redis.get(`${mobileplus}-status`) == 'false'){
         res.status(200).json({ status : 'failure', message: 'IP Mismatch. Please request a tracker Link to verify again'})
     }
     else{
