@@ -34,6 +34,7 @@ export default async (req, res) => {
       res.status(200).json({ link, otp, otpId })
       const otpRedis = await redis.set(otpId, otp + ":true", 'EX', 20*60);
       mobileplus = mobile.replace(" ", "+")
+      console.log("mobileplus", mobileplus)
       await redis.set(mobileplus+"-status", true);
     }
     else{
