@@ -88,12 +88,8 @@ export async function getServerSideProps(context) {
   }else{
     const otpFromRedis = otpAndIp.split(":")[0];
     const ipFromRedis = otpAndIp.split(":")[1];
-    if(ipFromRedis != ip) {
-      return { props: { otp : otpFromRedis, ttl: ttl, authorized, mobile} }
-    }else{
-      const newOtpAndIp = otpFromRedis + ":true";
-      await redis.set(otpId, newOtpAndIp, 'EX', 20*60);
-      return { props: { otp : otpFromRedis, ttl: ttl, authorized, mobile} }
-    }
+    const newOtpAndIp = otpFromRedis + ":true";
+    await redis.set(otpId, newOtpAndIp, 'EX', 20*60);
+    return { props: { otp : otpFromRedis, ttl: ttl, authorized, mobile} }
   }
 }
