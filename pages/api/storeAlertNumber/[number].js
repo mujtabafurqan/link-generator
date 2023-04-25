@@ -12,6 +12,7 @@ export default async (req, res) => {
     if(!number.startsWith('+')){
         mobileplus = number.replace(" ", "+");
     }
+    console.log("mobile", mobileplus)
     if(number.startsWith('+')){
         db.collection('alertNumbers').insertOne({number: number, created_at: new Date()}, async (err, result) => {
             if(err){
