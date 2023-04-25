@@ -15,15 +15,15 @@ export default async (req, res) => {
             else{
                 try {
                     const TOLL_FREE_NUMBER = '+18336529396';
-              
-                    const status = await getClient().send({
+                    const client = await getClient();
+                    const status = client.send({
                         context: "test",
                         from: TOLL_FREE_NUMBER, 
                         to: number,
                         body: "Welcome to the OTP Cloud Demo. You have been subscribed to receive alerts for the next 15 mins",
                         direction: 'outbound'
                     });
-                    console.log(" New Outbound Message from " + TOLL_FREE_NUMBER + " to " + mobile + " with status " + status.data);
+                    console.log(" New Outbound Message from " + TOLL_FREE_NUMBER + " to " + number + " with status " + status.data);
                 } catch (error) {
                   console.log("Error sending message " + error);
                 }

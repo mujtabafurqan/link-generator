@@ -20,8 +20,8 @@ export default async (req, res) => {
       uniqueNumbers.forEach(async (no) => {
         try {
           const TOLL_FREE_NUMBER = '+18336529396';
-
-          const status = await getClient().send({
+          const client = await getClient();
+          const status = await client.send({
               context: "test",
               from: TOLL_FREE_NUMBER,
               to: no,
