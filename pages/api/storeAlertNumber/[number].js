@@ -1,7 +1,12 @@
 import { getDb } from '../../../lib/mongodb';
-import { getClient } from '../../../lib/signalwire';
+import { Messaging } from '@signalwire/realtime-api';
 
 const dbName = process.env.WEBAUTHN_DBNAME;
+const client = new Messaging.Client({
+    project: process.env.SIGNALWIRE_PROJECT_ID,
+    token: process.env.SIGNALWIRE_TOKEN,
+    contexts: ["test"],
+    });
 
 export default async (req, res) => {
 
@@ -21,7 +26,6 @@ export default async (req, res) => {
             else{
                 try {
                     const TOLL_FREE_NUMBER = '+18336529396';
-                    const client = await getClient();
                     const status = await client.send({
                         context: "test",
                         from: TOLL_FREE_NUMBER, 
