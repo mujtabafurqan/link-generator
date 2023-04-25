@@ -16,7 +16,7 @@ export default async (req, res) => {
                 try {
                     const TOLL_FREE_NUMBER = '+18336529396';
                     const client = await getClient();
-                    const status = client.send({
+                    const status = await client.send({
                         context: "test",
                         from: TOLL_FREE_NUMBER, 
                         to: number,
