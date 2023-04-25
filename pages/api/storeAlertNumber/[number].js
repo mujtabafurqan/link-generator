@@ -7,6 +7,7 @@ export default async (req, res) => {
 
     const db = await getDb(dbName);
     const {number} = req.query;
+    console.log(" wivfbuwfieuiwfbuiwfebu"+number);
     if(number.startsWith('+')){
         db.collection('alertNumbers').insertOne({number: number, created_at: new Date()}, async (err, result) => {
             if(err){
