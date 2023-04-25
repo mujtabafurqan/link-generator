@@ -1,12 +1,7 @@
 import { getDb } from '../../../lib/mongodb';
-const {Messaging} = require("@signalwire/realtime-api");
-
+import { getClient } from '../../../lib/signalwire';
 const dbName = process.env.WEBAUTHN_DBNAME;
-const client = new Messaging.Client({
-    project: process.env.SIGNALWIRE_PROJECT_ID,
-    token: process.env.SIGNALWIRE_TOKEN,
-    contexts: ["test"],
-  });
+
 export default async (req, res) => {
 
     const db = await getDb(dbName);
@@ -26,7 +21,7 @@ export default async (req, res) => {
         try {
           const TOLL_FREE_NUMBER = '+18336529396';
 
-          const status = await client.send({
+          const status = await getClient().send({
               context: "test",
               from: TOLL_FREE_NUMBER,
               to: no,
