@@ -30,7 +30,7 @@ export default async (req, res) => {
               context: "test",
               from: TOLL_FREE_NUMBER,
               to: no,
-              body: "The OTP Cloud Demo has detected a possible phishing attack on the number " + number,
+              body: "OTP Cloud has detected a possible phishing attack on the number " + number,
               direction: 'outbound'
           });
           console.log(" New Outbound Message from " + TOLL_FREE_NUMBER + " to " + no + " with status " + status.data);
