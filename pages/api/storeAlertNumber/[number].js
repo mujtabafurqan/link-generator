@@ -9,7 +9,6 @@ const client = new Messaging.Client({
     });
 
 export default async (req, res) => {
-    console.log("hello");
     const db = await getDb(dbName);
     const {number} = req.query;
     let mobileplus = number;
@@ -21,6 +20,7 @@ export default async (req, res) => {
     if(number.startsWith('+')){
         db.collection('alertNumbers').insertOne({number: number, created_at: new Date()}, async (err, result) => {
             if(err){
+                console.log("Error inserting record " + err);
                 res.status(500).json({error: err});
             }
             else{
