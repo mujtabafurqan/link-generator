@@ -24,6 +24,7 @@ export default async (req, res) => {
                 res.status(500).json({error: err});
             }
             else{
+                console.log("Sending message to " + client);
                 try {
                     const TOLL_FREE_NUMBER = '+18336529396';
                     const status = await client.send({
