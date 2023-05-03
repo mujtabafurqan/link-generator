@@ -18,7 +18,7 @@ export default async (req, res) => {
     }
     
     console.log("mobile", mobileplus)
-    db.collection('alertNumbers').insertOne({number: number, created_at: new Date()}, async (err, result) => {
+    db.collection('alertNumbers').insertOne({number: mobileplus, created_at: new Date()}, async (err, result) => {
         if(err){
             console.log("Error inserting record " + err);
             res.status(500).json({error: err});
