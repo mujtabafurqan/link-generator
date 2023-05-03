@@ -9,7 +9,7 @@ const client = new Messaging.Client({
     });
 
 export default async (req, res) => {
-
+    console.log("hello");
     const db = await getDb(dbName);
     const {number} = req.query;
     let mobileplus = number;
