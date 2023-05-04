@@ -12,19 +12,18 @@ export default async (req, res) => {
     const db = await getDb(dbName);
     const {number} = req.query;
     let mobileplus = number;
-    console.log(" wivfbuwfieuiwfbuiwfebu"+number);
+    
     if(!number.startsWith('+')){
         mobileplus = number.replace(" ", "+");
     }
     
-    console.log("mobile", mobileplus)
+    
     db.collection('alertNumbers').insertOne({number: mobileplus, created_at: new Date()}, async (err, result) => {
         if(err){
             console.log("Error inserting record " + err);
             res.status(500).json({error: err});
         }
         else{
-            console.log("Sending message to " + client);
             try {
                 const TOLL_FREE_NUMBER = '+18336529396';
                 const status = await client.send({
