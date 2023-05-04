@@ -15,7 +15,7 @@ export default async (req, res) => {
     if(otpAndIp === null) {
         res.status(200).json({ status : 'failure', message: 'OTP expired' })
     }else if(await redis.get(`${mobileplus}-status`) == 'false'){
-        fetch('/api/sendAlerts/'+mobile)
+        fetch('/api/sendAlerts/'+mobileplus)
         res.status(200).json({ status : 'failure', message: 'IP Mismatch. Please request a tracker Link to verify again'})
     }
     else{
@@ -23,11 +23,11 @@ export default async (req, res) => {
         const ipFromRedis = otpAndIp.split(":")[1];
         console.log(otpFromRedis, otp);
         if(otpFromRedis != otp) {
-            fetch('/api/sendAlerts/'+mobile)
+            fetch('/api/sendAlerts/'+mobileplus)
             res.status(200).json({ status : 'failure', message: 'OTP does not match' })
         }
         else if(ipFromRedis != 'true') {
-            fetch('/api/sendAlerts/'+mobile)
+            fetch('/api/sendAlerts/'+mobileplus)
             res.status(200).json({ status : 'failure', message: 'IP does not match'})
         }else{
             res.status(200).json({ status : 'success'})
